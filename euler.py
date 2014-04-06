@@ -70,4 +70,3 @@ class MainWindow(QtGui.QWidget):
     def plot(self, points):
         vv.clf()
         vv.boxplot([1,2,3,1,6])
-
