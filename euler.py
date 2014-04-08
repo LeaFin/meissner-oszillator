@@ -14,17 +14,17 @@ def euler(t_end, t_start, y_start, h, figure):
     h = (t_end - t_start) / n
 
     for i in range(n):
-        k = w(t, y)
-        figure.plot([t, y[0]])
+        k = w(t, y, figure)
         y = y + k * h
         t = t + h
     return y
 
-def w(t, y):
-    c=0.000001
-    l=0.1
-    r=30
-    u=5
+def w(t, y, figure):
+    c=0.05
+    l=0.7
+    r=0.3
+    u=0.3
+    figure.plot([t, y.item(0)/c])
     q=y.item(0)
     i=y.item(1)
     dI_dt = u/l-q/(c*l)-(r*i)/l
@@ -33,7 +33,7 @@ def w(t, y):
 
 class MainWindow(QtGui.QWidget):
     def __init__(self, *args):
-        self.points = []
+        self.points = [[],[]]
 
         QtGui.QWidget.__init__(self, *args)
         
@@ -66,7 +66,10 @@ class MainWindow(QtGui.QWidget):
         euler(1.3, 0, np.matrix('0;0'), 0.01, self)
 
     def plot(self, new_point):
-        print new_point
+        vv.clf()
+        self.points[0].append(new_point[0])
+        self.points[1].append(new_point[1])
+        vv.plot(self.points[0], self.points[1])
 
 if True:
     # The visvis way. Will run in interactive mode when used in IEP or IPython.
