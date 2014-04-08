@@ -7,14 +7,15 @@ import visvis as vv
 
 app = vv.use(backend)
 
-def euler(t_end, t_start, y_start, h):
+def euler(t_end, t_start, y_start, h, figure):
     y = y_start
     t = t_start
     n = int((t_end - t_start) / h)
-    h = (t_start - t_end) / n
+    h = (t_end - t_start) / n
 
     for i in range(n):
         k = w(t, y)
+        figure.plot([t, y[0]])
         y = y + k * h
         t = t + h
     return y
@@ -32,6 +33,8 @@ def w(t, y):
 
 class MainWindow(QtGui.QWidget):
     def __init__(self, *args):
+        self.points = []
+
         QtGui.QWidget.__init__(self, *args)
         
         # Make a panel with a button
@@ -60,13 +63,19 @@ class MainWindow(QtGui.QWidget):
         self.show()
 
     def _start_euler(self):
-
-        # Make sure our figure is the active one. 
-        # If only one figure, this is not necessary.
-        #vv.figure(self.fig.nr)
-
         euler(1.3, 0, np.matrix('0;0'), 0.01, self)
 
-    def plot(self, points):
-        vv.clf()
-        vv.boxplot([1,2,3,1,6])
+    def plot(self, new_point):
+        print new_point
+
+if True:
+    # The visvis way. Will run in interactive mode when used in IEP or IPython.
+    app.Create()
+    m = MainWindow()
+    app.Run()
+
+else:
+    # The native way.
+    qtApp = QtGui.QApplication([''])    
+    m = MainWindow()
+    qtApp.exec_()
