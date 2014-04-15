@@ -6,5 +6,5 @@ meissner-oszillator
 * Python ( neuste Version )
 * Numpy
 * VisVis ( Mac / Linux )
-* pyOpenGL
+* pyOpenGL ( Version 3 or higher )
 * pyQt4
