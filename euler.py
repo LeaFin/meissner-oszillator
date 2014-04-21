@@ -5,6 +5,8 @@ backend = 'pyqt4'
 
 import visvis as vv
 
+import time
+
 app = vv.use(backend)
 
 def euler(t_end, t_start, y_start, h, figure):
@@ -17,7 +19,7 @@ def euler(t_end, t_start, y_start, h, figure):
         k = w(t, y, figure)
         y = y + k * h
         t = t + h
-    return y
+
 
 def w(t, y, figure):
     c=0.05
@@ -34,42 +36,47 @@ def w(t, y, figure):
 class MainWindow(QtGui.QWidget):
     def __init__(self, *args):
         self.points = [[],[]]
-
         QtGui.QWidget.__init__(self, *args)
-        
+
         # Make a panel with a button
         self.panel = QtGui.QWidget(self)
         but = QtGui.QPushButton(self.panel)
         but.setText('Push me')
-        
+
         # Make figure using "self" as a parent
         Figure = app.GetFigureClass()
         self.fig = Figure(self)
-        
+
         # Make sizer and embed stuff
         self.sizer = QtGui.QHBoxLayout(self)
         self.sizer.addWidget(self.panel, 1)
-        self.sizer.addWidget(self.fig._widget, 2)
-        
+        self.sizer.addWidget(self.fig._widget, 3)
+
         # Make callback
         but.pressed.connect(self._start_euler)
-        
-        # Apply sizers        
+
+        # Apply sizers
         self.setLayout(self.sizer)
-        
+
         # Finish
-        self.resize(560, 420)
+        self.resize(800, 420)
         self.setWindowTitle('Meissner Oszillator')
         self.show()
 
     def _start_euler(self):
-        euler(1.3, 0, np.matrix('0;0'), 0.01, self)
+        euler(6., 0, np.matrix('0;0'), 0.01, self)
 
     def plot(self, new_point):
         vv.clf()
         self.points[0].append(new_point[0])
         self.points[1].append(new_point[1])
-        vv.plot(self.points[0], self.points[1])
+        length = max(len(self.points[0]) - 130, 0)
+        self.points[0] = self.points[0][length:]
+        self.points[1] = self.points[1][length:]
+        vv.plot(self.points[0], self.points[1], lw=0, mw=1, ms='.')
+        self.fig.currentAxes.SetLimits((self.points[0][0], self.points[0][0]+1.5), (0, 0.7))
+        self.fig.currentAxes.axis.showGrid = True
+        self.fig.DrawNow()
 
 if True:
     # The visvis way. Will run in interactive mode when used in IEP or IPython.
@@ -79,6 +86,6 @@ if True:
 
 else:
     # The native way.
-    qtApp = QtGui.QApplication([''])    
+    qtApp = QtGui.QApplication([''])
     m = MainWindow()
     qtApp.exec_()
