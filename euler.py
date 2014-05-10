@@ -22,15 +22,16 @@ def euler(t_end, t_start, y_start, h, figure):
 
 
 def w(t, y, figure):
-    c=0.05
-    l=0.7
+    c=0.3
+    l=0.1
     r=0.3
-    u=0.3
-    figure.plot([t, y.item(0)/c])
-    q=y.item(0)
+    u0=0.5
+    figure.plot([t, y.item(0)])
+    u=y.item(0)
     i=y.item(1)
-    dI_dt = u/l-q/(c*l)-(r*i)/l
-    return np.matrix([[i],[dI_dt]])
+    dI_dt = u/l
+    dU_dt = (u0-u)/r/c-i/c
+    return np.matrix([[dU_dt],[dI_dt]])
 
 
 class MainWindow(QtGui.QWidget):
