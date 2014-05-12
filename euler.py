@@ -75,7 +75,7 @@ class MainWindow(QtGui.QWidget):
         self.show()
 
     def _start_euler(self):
-        euler(20., 0, np.matrix('0;0'), 0.01, self)
+        euler(20., 0, np.matrix('0;0'), 0.05, self)
 
     def _get_cap_val(self, val, *args, **kwargs):
         print Decimal(val) / 1000
@@ -84,11 +84,11 @@ class MainWindow(QtGui.QWidget):
         vv.clf()
         self.points[0].append(new_point[0])
         self.points[1].append(new_point[1])
-        length = max(len(self.points[0]) - 130, 0)
+        length = max(len(self.points[0]) - 140, 0)
         self.points[0] = self.points[0][length:]
         self.points[1] = self.points[1][length:]
         vv.plot(self.points[0], self.points[1], lw=0, mw=1, ms='.')
-        self.fig.currentAxes.SetLimits((self.points[0][0], self.points[0][0]+1.5), (-2, 2))
+        self.fig.currentAxes.SetLimits((self.points[0][0], self.points[0][0]+7.5), (-2, 2))
         self.fig.currentAxes.axis.showGrid = True
         self.fig.DrawNow()
 
