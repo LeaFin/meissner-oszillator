@@ -22,15 +22,18 @@ def euler(t_end, t_start, y_start, h, figure):
 
 
 def w(t, y, figure):
-    c=0.3
-    l=0.1
+    c=200
+    l=0.01
+    l2=0.01
     r=0.3
-    u0=0.5
+    u0=50
     figure.plot([t, y.item(0)])
     u=y.item(0)
     i=y.item(1)
+    u2=l2*(u/l)
+    u3=3*u2
     dI_dt = u/l
-    dU_dt = (u0-u)/r/c-i/c
+    dU_dt = (u0+u3-u)/r/c-i/c
     return np.matrix([[dU_dt],[dI_dt]])
 
 
@@ -65,7 +68,7 @@ class MainWindow(QtGui.QWidget):
         self.show()
 
     def _start_euler(self):
-        euler(6., 0, np.matrix('0;0'), 0.01, self)
+        euler(20., 0, np.matrix('0;0'), 0.01, self)
 
     def plot(self, new_point):
         vv.clf()
@@ -75,7 +78,7 @@ class MainWindow(QtGui.QWidget):
         self.points[0] = self.points[0][length:]
         self.points[1] = self.points[1][length:]
         vv.plot(self.points[0], self.points[1], lw=0, mw=1, ms='.')
-        self.fig.currentAxes.SetLimits((self.points[0][0], self.points[0][0]+1.5), (0, 0.7))
+        self.fig.currentAxes.SetLimits((self.points[0][0], self.points[0][0]+1.5), (-2, 2))
         self.fig.currentAxes.axis.showGrid = True
         self.fig.DrawNow()
 
