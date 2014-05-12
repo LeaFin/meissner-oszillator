@@ -3,9 +3,10 @@ import numpy as np
 from PyQt4 import QtGui, QtCore
 backend = 'pyqt4'
 
+from decimal import Decimal
+
 import visvis as vv
 
-import time
 
 app = vv.use(backend)
 
@@ -41,8 +42,8 @@ class MainWindow(QtGui.QWidget):
 
         # Make a panel with a button
         self.panel = QtGui.QWidget(self)
-        but = QtGui.QPushButton(self.panel)
-        but.setText('Push me')
+        but = QtGui.QPushButton(text="Simulation starten")
+        cap_slider = QtGui.QSlider(QtCore.Qt.Horizontal, minimum=200, maximum=400)
 
         # Make figure using "self" as a parent
         Figure = app.GetFigureClass()
@@ -53,11 +54,17 @@ class MainWindow(QtGui.QWidget):
         self.sizer.addWidget(self.panel, 1)
         self.sizer.addWidget(self.fig._widget, 3)
 
-        # Make callback
+        self.panelLayout = QtGui.QVBoxLayout(self.panel)
+        self.panelLayout.addWidget(but)
+        self.panelLayout.addWidget(cap_slider)
+
+        # Make callbacks
         but.pressed.connect(self._start_euler)
+        cap_slider.valueChanged.connect(self._get_cap_val)
 
         # Apply sizers
         self.setLayout(self.sizer)
+        self.panel.setLayout(self.panelLayout)
 
         # Finish
         self.resize(800, 420)
@@ -66,6 +73,9 @@ class MainWindow(QtGui.QWidget):
 
     def _start_euler(self):
         euler(6., 0, np.matrix('0;0'), 0.01, self)
+
+    def _get_cap_val(self, val, *args, **kwargs):
+        print Decimal(val) / 1000
 
     def plot(self, new_point):
         vv.clf()
