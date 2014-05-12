@@ -75,7 +75,7 @@ class MainWindow(QtGui.QWidget):
         self.show()
 
     def _start_euler(self):
-        euler(20., 0, np.matrix('0;0'), 0.05, self)
+        euler(20., 0, np.matrix('0;0'), 0.01, self)
 
     def _get_cap_val(self, val, *args, **kwargs):
         print Decimal(val) / 1000
