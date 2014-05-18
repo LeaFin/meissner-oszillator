@@ -27,14 +27,15 @@ def w(t, y, figure):
     l=0.2
     l2=0.02
     r=2
-    u0=10
+    u0=50 #+50*sin(2*3.141*0*t)
     figure.plot([t, y.item(0)])
     u=y.item(0)
     i=y.item(1)
-    u2=l2*(u/l)
-    u3=2*u2
     dI_dt = u/l
-    dU_dt = (u0+u3-u)/r/c-i/c
+    u2=l2*dI_dt
+    u3=10*u2
+    
+    dU_dt = (u0+0-u)/(r*c)-i/c
     return np.matrix([[dU_dt],[dI_dt]])
 
 
@@ -75,7 +76,7 @@ class MainWindow(QtGui.QWidget):
         self.show()
 
     def _start_euler(self):
-        euler(30., 0, np.matrix('0;0'), 0.1, self)
+        euler(200., 0, np.matrix('0;0'), 0.1, self)
 
     def _get_cap_val(self, val, *args, **kwargs):
         print Decimal(val) / 1000
@@ -88,7 +89,7 @@ class MainWindow(QtGui.QWidget):
         self.points[0] = self.points[0][length:]
         self.points[1] = self.points[1][length:]
         vv.plot(self.points[0], self.points[1], lw=0, mw=1, ms='.')
-        self.fig.currentAxes.SetLimits((self.points[0][0], self.points[0][0]+10), (-3, 3))
+        self.fig.currentAxes.SetLimits((self.points[0][0], self.points[0][0]+10), (-4, 4))
         self.fig.currentAxes.axis.showGrid = True
         self.fig.DrawNow()
 
