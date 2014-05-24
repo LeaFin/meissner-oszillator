@@ -18,7 +18,7 @@ def runge_kutta(t_end, t_start, y_start, h, figure):
         if t > 2:
             u0 = 0
         ka = w(t, y, u0)
-        ya = y + h/2*ka
+        ya = y + h/2 * ka
         ta = t + h/2
 
         kb = w(ta, ya, u0)
