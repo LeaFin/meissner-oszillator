@@ -50,12 +50,13 @@ class MainWindow(QtGui.QWidget):
         self.resize(800, 420)
         self.setWindowTitle('Meissner Oszillator')
         self.show()
+        self.raise_()
 
     def _start_euler(self):
-        euler(300., 0, np.matrix('0;0'), 0.05, self)
+        euler(300., 0, np.matrix('0;0'), 0.1, self)
 
     def _start_runge_kutta(self):
-        runge_kutta(300., 0, np.matrix('0;0'), 0.1, self)
+        runge_kutta(300., 0, np.matrix('0;0'), 0.2, self)
 
     def _get_cap_val(self, val, *args, **kwargs):
         print Decimal(val) / 1000
@@ -64,11 +65,11 @@ class MainWindow(QtGui.QWidget):
         vv.clf()
         self.points[0].append(new_point[0])
         self.points[1].append(new_point[1])
-        length = max(len(self.points[0]) - 90, 0)
+        length = max(len(self.points[0]) - 50, 0)
         self.points[0] = self.points[0][length:]
         self.points[1] = self.points[1][length:]
         vv.plot(self.points[0], self.points[1], lw=0, mw=1, ms='.')
-        self.fig.currentAxes.SetLimits((self.points[0][0], self.points[0][0]+10), (-10, 10))
+        self.fig.currentAxes.SetLimits((self.points[0][0], self.points[0][0]+10), (-0.3, 0.3))
         self.fig.currentAxes.axis.showGrid = True
         self.fig.DrawNow()
 
