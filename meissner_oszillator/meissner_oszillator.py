@@ -56,7 +56,7 @@ class MainWindow(QtGui.QWidget):
         euler(300., 0, np.matrix('0;0'), 0.1, self)
 
     def _start_runge_kutta(self):
-        runge_kutta(300., 0, np.matrix('0;0'), 0.2, self)
+        runge_kutta(300., 0, np.matrix('0;0'), 0.1, self)
 
     def _get_cap_val(self, val, *args, **kwargs):
         print Decimal(val) / 1000
@@ -69,7 +69,7 @@ class MainWindow(QtGui.QWidget):
         self.points[0] = self.points[0][length:]
         self.points[1] = self.points[1][length:]
         vv.plot(self.points[0], self.points[1], lw=0, mw=1, ms='.')
-        self.fig.currentAxes.SetLimits((self.points[0][0], self.points[0][0]+10), (-0.3, 0.3))
+        self.fig.currentAxes.SetLimits((self.points[0][0], self.points[0][0]+10), (-5, 5))
         self.fig.currentAxes.axis.showGrid = True
         self.fig.DrawNow()
 

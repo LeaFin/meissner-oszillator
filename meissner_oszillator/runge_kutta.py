@@ -2,8 +2,8 @@ import numpy as np
 
 c=0.9
 l=0.2
-l2=0.02
-r=23 # regler [1-2]
+l2=0.03
+r=5.0 # regler [1-2]
 
 
 def runge_kutta(t_end, t_start, y_start, h, figure):
@@ -14,7 +14,7 @@ def runge_kutta(t_end, t_start, y_start, h, figure):
     h = float((t_end - t_start) / n)
 
     for i in range(n):
-        u0 = 20 #+50*sin(2*3.141*0*t)
+        u0 = 20. #+50*sin(2*3.141*0*t)
         ka = w(t, y, u0)
         ya = y + h/2 * ka
         ta = t + h/2
@@ -42,9 +42,7 @@ def w(t, y, u0):
     i=y.item(1)
     dI_dt = u/l
     u2=l2*dI_dt
-    if u2 == 0:
-        u2 = 1
-    u3=u0*u2
+    u3=u0*(u2/3+1.0/2)
 
     dU_dt = (u3-u)/(r*c)-i/c
 
