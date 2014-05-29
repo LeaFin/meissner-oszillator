@@ -1,8 +1,8 @@
 import numpy as np
 
-c=0.9
-l=0.2
-r=0.1
+# c=0.9
+# l=0.2
+# r=0.1
 
 
 def runge_kutta_simple(t_end, t_start, y_start, h, figure):
@@ -13,19 +13,19 @@ def runge_kutta_simple(t_end, t_start, y_start, h, figure):
     h = float((t_end - t_start) / n)
 
     for i in range(n):
-        ka = w_simple(t, y)
+        ka = w_simple(t, y, r=figure.r, c=figure.c, l=figure.l1)
         ya = y + h/2 * ka
         ta = t + h/2
 
-        kb = w_simple(ta, ya)
+        kb = w_simple(ta, ya, r=figure.r, c=figure.c, l=figure.l1)
         yb = y + h/2*kb
         tb = t + h/2
 
-        kc = w_simple(tb,yb)
+        kc = w_simple(tb, yb, r=figure.r, c=figure.c, l=figure.l1)
         yc = y + h * kc
         tc = t + h
 
-        kd = w_simple(tc , yc)
+        kd = w_simple(tc, yc, r=figure.r, c=figure.c, l=figure.l1)
 
         k = (1. / 6) * ((ka + 2 * kb + 2 * kc + kd))
 
@@ -35,7 +35,7 @@ def runge_kutta_simple(t_end, t_start, y_start, h, figure):
 
 
 
-def w_simple(t, y):
+def w_simple(t, y, r, c, l):
 
     q=y.item(0)
     i=y.item(1)
