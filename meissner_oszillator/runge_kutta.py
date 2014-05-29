@@ -27,4 +27,4 @@ def runge_kutta(t_end, t_start, y_start, h, figure):
 
         y = y + k * h
         t = t + h
-        figure.plot([t, y.item(0)])
+        figure.plot([t, y.item(0), y.item(1)])

@@ -18,12 +18,17 @@ app = vv.use(backend)
 class MainWindow(QtGui.QWidget):
     def __init__(self, *args):
         self.points = [[],[]]
+        self.points_i = [[],[]]
         QtGui.QWidget.__init__(self, *args)
 
         # Make a panel with a button
         self.panel = QtGui.QWidget(self)
         but_m = QtGui.QPushButton(text="Meissner Oszillator")
         but_s = QtGui.QPushButton(text="Schwingkreis")
+        self.check_u = QtGui.QCheckBox(text="Kondensatorspannung")
+        self.check_i = QtGui.QCheckBox(text="Strom durch Spule")
+        self.check_u.nextCheckState()
+        self.check_i.nextCheckState()
         cap_slider = QtGui.QSlider(QtCore.Qt.Horizontal, minimum=200, maximum=400)
 
         # Make figure using "self" as a parent
@@ -38,6 +43,8 @@ class MainWindow(QtGui.QWidget):
         self.panelLayout = QtGui.QVBoxLayout(self.panel)
         self.panelLayout.addWidget(but_m)
         self.panelLayout.addWidget(but_s)
+        self.panelLayout.addWidget(self.check_u)
+        self.panelLayout.addWidget(self.check_i)
         self.panelLayout.addWidget(cap_slider)
 
         # Make callbacks
@@ -58,14 +65,17 @@ class MainWindow(QtGui.QWidget):
 
     def _start_euler(self):
         self.points = [[],[]]
+        self.points_i = [[],[]]
         euler(300., 0, np.matrix('0;0'), 0.1, self)
 
     def _start_runge_kutta(self):
         self.points = [[],[]]
+        self.points_i = [[],[]]
         runge_kutta(300., 0, np.matrix('0;0'), 0.1, self)
 
     def _start_runge_kutta_simple(self):
         self.points = [[],[]]
+        self.points_i = [[],[]]
         runge_kutta_simple(300., 0, np.matrix('3;0'), 0.1, self)
 
     def _get_cap_val(self, val, *args, **kwargs):
@@ -73,15 +83,27 @@ class MainWindow(QtGui.QWidget):
 
     def plot(self, new_point):
         vv.clf()
-        self.points[0].append(new_point[0])
-        self.points[1].append(new_point[1])
-        length = max(len(self.points[0]) - 90, 0)
-        self.points[0] = self.points[0][length:]
-        self.points[1] = self.points[1][length:]
-        vv.plot(self.points[0], self.points[1], lw=0, mw=1, ms='.')
-        self.fig.currentAxes.SetLimits((self.points[0][0], self.points[0][0]+10), (-5, 5))
+        length = max(len(self.points[0]) - 90, len(self.points_i[0]) - 90, 0)
+        if self.check_u.checkState():
+            self.plot_point_set(new_point[:2], 'b', length)
+        if self.check_i.checkState():
+            self.plot_point_set([new_point[0], new_point[2]], 'r', length, i=True)
+        first_point = self.points_i[0][0] if self.check_i.checkState() else self.points[0][0]
+        self.fig.currentAxes.SetLimits((first_point, first_point+10), (-5, 5))
         self.fig.currentAxes.axis.showGrid = True
         self.fig.DrawNow()
+
+    def plot_point_set(self, new_point, color, length, i=False):
+        points = self.points_i if i else self.points
+        points[0].append(new_point[0])
+        points[1].append(new_point[1])
+        points[0] = points[0][length:]
+        points[1] = points[1][length:]
+        vv.plot(points[0], points[1], lw=0, mw=1, ms='.', mc=color, mec=color)
+        if i:
+            self.points_i = points
+        else:
+            self.points = points
 
 
 if True:
