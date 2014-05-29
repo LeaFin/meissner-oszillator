@@ -1,13 +1,11 @@
 import numpy as np
 
-c=0.9
 l=0.2
 l2=0.03
-r=5.0 # regler [1-2]
 u0 = 20.
 
 
-def w(t, y):
+def w(t, y, r, c):
     u=y.item(0)
     i=y.item(1)
     dI_dt = u/l

@@ -3,8 +3,6 @@ import numpy as np
 from PyQt4 import QtGui, QtCore
 backend = 'pyqt4'
 
-from decimal import Decimal
-
 from euler import euler
 from runge_kutta import runge_kutta
 from runge_kutta_simple import runge_kutta_simple
@@ -14,12 +12,21 @@ import visvis as vv
 
 app = vv.use(backend)
 
+c = 0.9
+l = 0.2
+l2 = 0.03
+r = 5.0 # regler [1-2]
+u0 = 20.
+
 
 class MainWindow(QtGui.QWidget):
     def __init__(self, *args):
         self.points = [[],[]]
         self.points_i = [[],[]]
         QtGui.QWidget.__init__(self, *args)
+
+        self.r = 5.0
+        self.c = 0.9
 
         # Make a panel with a button
         self.panel = QtGui.QWidget(self)
@@ -29,7 +36,10 @@ class MainWindow(QtGui.QWidget):
         self.check_i = QtGui.QCheckBox(text="Strom durch Spule")
         self.check_u.nextCheckState()
         self.check_i.nextCheckState()
-        cap_slider = QtGui.QSlider(QtCore.Qt.Horizontal, minimum=200, maximum=400)
+        resistor_slider = QtGui.QSlider(QtCore.Qt.Horizontal, minimum=10, maximum=100)
+        resistor_slider.setSliderPosition(50)
+        condensator_slider = QtGui.QSlider(QtCore.Qt.Horizontal, minimum=3, maximum=20)
+        condensator_slider.setSliderPosition(9)
 
         # Make figure using "self" as a parent
         Figure = app.GetFigureClass()
@@ -45,13 +55,15 @@ class MainWindow(QtGui.QWidget):
         self.panelLayout.addWidget(but_s)
         self.panelLayout.addWidget(self.check_u)
         self.panelLayout.addWidget(self.check_i)
-        self.panelLayout.addWidget(cap_slider)
+        self.panelLayout.addWidget(resistor_slider)
+        self.panelLayout.addWidget(condensator_slider)
 
         # Make callbacks
         # but_m.pressed.connect(self._start_euler)
         but_m.pressed.connect(self._start_runge_kutta)
         but_s.pressed.connect(self._start_runge_kutta_simple)
-        cap_slider.valueChanged.connect(self._get_cap_val)
+        resistor_slider.valueChanged.connect(self._set_resistor_val)
+        condensator_slider.valueChanged.connect(self._set_condensator_val)
 
         # Apply sizers
         self.setLayout(self.sizer)
@@ -78,8 +90,11 @@ class MainWindow(QtGui.QWidget):
         self.points_i = [[],[]]
         runge_kutta_simple(300., 0, np.matrix('3;0'), 0.1, self)
 
-    def _get_cap_val(self, val, *args, **kwargs):
-        print Decimal(val) / 1000
+    def _set_resistor_val(self, val, *args, **kwargs):
+        self.r = float(val) / 10
+
+    def _set_condensator_val(self, val, *args, **kwargs):
+        self.c = float(val) / 10
 
     def plot(self, new_point):
         vv.clf()
