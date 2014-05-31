@@ -1,6 +1,8 @@
 import numpy as np
 
 
+# differental equation for meissner oscillator
+# evaluating one time step per call
 def w(t, y, r, c, u0, l1, l12):
     u=y.item(0)
     i=y.item(1)

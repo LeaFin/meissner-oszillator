@@ -4,7 +4,7 @@ import numpy as np
 # l=0.2
 # r=0.1
 
-
+# implementation of runge kutta for simple circuit
 def runge_kutta_simple(t_end, t_start, y_start, h, figure):
     y = y_start
     t = t_start
@@ -34,7 +34,8 @@ def runge_kutta_simple(t_end, t_start, y_start, h, figure):
         figure.plot([t, y.item(0), y.item(1)])
 
 
-
+# differential equation for simple circuit
+# evaluating one time step per call
 def w_simple(t, y, r, c, l):
 
     q=y.item(0)

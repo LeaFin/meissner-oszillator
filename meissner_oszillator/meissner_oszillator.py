@@ -1,3 +1,8 @@
+"""
+Entryfile for Meissner oscillator simulation
+Run: python meissner_oszillator.py
+"""
+
 import numpy as np
 
 from PyQt4 import QtGui, QtCore
@@ -10,16 +15,18 @@ from runge_kutta_simple import runge_kutta_simple
 import visvis as vv
 
 
-app = vv.use(backend)
-
 c = 0.9
 l = 0.2
 l2 = 0.03
 r = 5.0 # regler [1-2]
 u0 = 20.
 
+app = vv.use(backend)
+
 
 class MainWindow(QtGui.QWidget):
+
+    # Setting up GUI with variables for simulation
     def __init__(self, *args):
         self.points = [[],[]]
         self.points_i = [[],[]]
@@ -31,8 +38,10 @@ class MainWindow(QtGui.QWidget):
         self.l1 = 0.2
         self.l12 = 0.03
 
-        # Make a panel with a button
+        # Make a panel
         self.panel = QtGui.QWidget(self)
+
+        # Make all buttons, sliders for input
         but_m = QtGui.QPushButton(text="Meissner Oszillator")
         but_s = QtGui.QPushButton(text="Schwingkreis")
         self.check_u = QtGui.QCheckBox(text="Kondensatorspannung")
@@ -55,15 +64,16 @@ class MainWindow(QtGui.QWidget):
         inductor2_slider = QtGui.QSlider(QtCore.Qt.Horizontal, minimum=10, maximum=200)
         inductor2_slider.setSliderPosition(30)
 
-        # Make figure using "self" as a parent
+        # Make figure using MainWindow as a parent
         Figure = app.GetFigureClass()
         self.fig = Figure(self)
 
-        # Make sizer and embed stuff
+        # Make sizer
         self.sizer = QtGui.QHBoxLayout(self)
         self.sizer.addWidget(self.panel, 1)
         self.sizer.addWidget(self.fig._widget, 3)
 
+        # Set layout and embed everything
         self.panelLayout = QtGui.QVBoxLayout(self.panel)
         self.panelLayout.addWidget(but_m)
         self.panelLayout.addWidget(but_s)
@@ -99,21 +109,28 @@ class MainWindow(QtGui.QWidget):
         self.show()
         self.raise_()
 
+    # Starts simulation with euler algorithem
     def _start_euler(self):
         self.points = [[],[]]
         self.points_i = [[],[]]
+        # Inputs: endtime, starttime, matrix with start voltage and start currency, timesteps, figure to plot
         euler(300., 0, np.matrix('0;0'), 0.1, self)
 
+    # Starts simulation with runge_kutta algorithem
     def _start_runge_kutta(self):
         self.points = [[],[]]
         self.points_i = [[],[]]
+        # Inputs: endtime, starttime, matrix with start voltage and start currency, timesteps, figure to plot
         runge_kutta(300., 0, np.matrix('0;0'), 0.1, self)
 
+    # Starts simulation with runge_kutta algorithem for simple circuit
     def _start_runge_kutta_simple(self):
         self.points = [[],[]]
         self.points_i = [[],[]]
+        # Inputs: endtime, starttime, matrix with start voltage and start currency, timesteps, figure to plot
         runge_kutta_simple(300., 0, np.matrix('%f;0' % self.u0), 0.1, self)
 
+    # Setting input values on callbacks of sliders
     def _set_resistor_val(self, val, *args, **kwargs):
         self.r = float(val) / 10
         self.resistor_label.setText("Widerstand: %.1f Ohm" % self.r)
@@ -134,20 +151,28 @@ class MainWindow(QtGui.QWidget):
         self.l12 = float(val) / 1000
         self.inductor2_label.setText("Spule 2: %.3f H" % self.l12)
 
+    # Plotting new frame
     def plot(self, new_point):
         vv.clf()
+        # checking amount of points
         length = max(len(self.points[0]) - 90, len(self.points_i[0]) - 90, 0)
         if self.check_u.checkState():
+            # plots points for voltage if voltage is on
             self.plot_point_set(new_point[:2], 'b', length)
         if self.check_i.checkState():
+            # plots points for currency if currency is on
             self.plot_point_set([new_point[0], new_point[2]], 'r', length, i=True)
+
         first_point = self.points_i[0][0] if self.check_i.checkState() else self.points[0][0]
+
+        # set Axes limits on current time
         self.fig.currentAxes.SetLimits((first_point, first_point+10), (-5, 5))
         self.fig.currentAxes.axis.showGrid = True
         self.fig.DrawNow()
 
     def plot_point_set(self, new_point, color, length, i=False):
         points = self.points_i if i else self.points
+        # appending new point and drop old if window is full
         points[0].append(new_point[0])
         points[1].append(new_point[1])
         points[0] = points[0][length:]
@@ -158,15 +183,10 @@ class MainWindow(QtGui.QWidget):
         else:
             self.points = points
 
-
-if True:
-    # The visvis way. Will run in interactive mode when used in IEP or IPython.
+# Start programm
+def main():
     app.Create()
     m = MainWindow()
     app.Run()
 
-else:
-    # The native way.
-    qtApp = QtGui.QApplication([''])
-    m = MainWindow()
-    qtApp.exec_()
+if  __name__ =='__main__':main()
